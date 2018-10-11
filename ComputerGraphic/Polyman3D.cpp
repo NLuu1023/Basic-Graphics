@@ -297,6 +297,7 @@ void settrans1(void) {
     glLoadIdentity();
     glTranslatef(dx, dy, dz);
     glRotatef(theta, 0.0, 0.0, 1.0);
+    //glRotatef(theta, 0.0, 1.0, 0.0);
     return;
 }
 
@@ -347,11 +348,20 @@ void drawIcon(float bx[][33], float by[][33], float bz[][33]) {
     //draw the shape for the polygon
     glColor3f(0.0, 0.0, 1.0);
     for (face = 0; face <= 3; face++) {
-	   glShadeModel(GL_FLAT);
-	   glBegin(GL_POLYGON);
+	   glBegin(GL_LINE_STRIP);
 	   for (i = 0; i <= 5; i++) glVertex3f(bx[face][i], by[face][i], bz[face][i]);
+	   glVertex3f(bx[face][5], by[face][5], bz[face][5]);
+	   glVertex3f(bx[face][0], by[face][0], bz[face][0]);
 	   glEnd();
     }
+    glBegin(GL_LINES);
+    glVertex3f(bx[0][0], by[0][0], bz[0][0]);
+    glVertex3f(bx[2][0], by[2][0], bz[2][0]);
+    glEnd();
+    glBegin(GL_LINES);
+    glVertex3f(bx[0][3], by[0][3], bz[0][3]);
+    glVertex3f(bx[2][3], by[2][3], bz[2][3]);
+    glEnd();
 
     //after flip, frame = 4, draw smile
     if (frame >= 4) {
@@ -396,12 +406,12 @@ void drawIcon(float bx[][33], float by[][33], float bz[][33]) {
     //front eye
     glPointSize(5);
     glBegin(GL_POINTS);
-    glVertex2f(bx[0][14], by[0][14]);
+    glVertex3f(bx[0][14], by[0][14], bz[0][14]);
     glEnd();
     //back eye
     glPointSize(5);
     glBegin(GL_POINTS);
-    glVertex2f(bx[2][14], by[2][14]);
+    glVertex3f(bx[2][14], by[2][14], bz[2][14]);
     glEnd();
 
     return;
@@ -449,23 +459,32 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
 	   else if(face == 0 || face == 2) {
 		  glColor3f(1.0, 0.0, 0.0);
 	   }
-	   glShadeModel(GL_FLAT);
-	   glBegin(GL_POLYGON);
+	   glBegin(GL_LINE_STRIP);
 	   for (i = 0; i <= 5; i++) glVertex3f(bx[face][i], by[face][i], bz[face][i]);
+	   glVertex3f(bx[face][5], by[face][5], bz[face][5]);
+	   glVertex3f(bx[face][0], by[face][0], bz[face][0]);
 	   glEnd();
     }
+    glBegin(GL_LINES);
+    glVertex3f(bx[0][0], by[0][0], bz[0][0]);
+    glVertex3f(bx[2][0], by[2][0], bz[2][0]);
+    glEnd();
+    glBegin(GL_LINES);
+    glVertex3f(bx[0][3], by[0][3], bz[0][3]);
+    glVertex3f(bx[2][3], by[2][3], bz[2][3]);
+    glEnd();
 
     //draw the eyes
     glColor3f(0.0, 0.0, 0.0);
     //front eye
     glPointSize(5);
     glBegin(GL_POINTS);
-    glVertex2f(bx[0][14], by[0][14]);
+    glVertex3f(bx[0][14], by[0][14], bz[0][14]);
     glEnd();
     //back eye
     glPointSize(5);
     glBegin(GL_POINTS);
-    glVertex2f(bx[2][14], by[2][14]);
+    glVertex3f(bx[2][14], by[2][14], bz[2][14]);
     glEnd();
 
     //draw corm rows and bows
@@ -483,32 +502,39 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
     glVertex3f(bx[0][19], by[0][19], bz[0][19]);
     glVertex3f(bx[0][20], by[0][20], bz[0][20]);
     glEnd();
-    //bows
+    //bows front
     glColor3f(1.0, 0.0, 1.0);
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 21; i <= 24; i++) glVertex3f(bx[0][i], by[0][i], 1.0);
+    glVertex3f(bx[0][24], by[0][24], 1.0);
+    glVertex3f(bx[0][21], by[0][21], 1.0);
     glEnd();
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 25; i <= 28; i++) glVertex3f(bx[0][i], by[0][i], 1.0);
+    glVertex3f(bx[0][28], by[0][28], 1.0);
+    glVertex3f(bx[0][25], by[0][25], 1.0);
     glEnd();
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 29; i <= 32; i++) glVertex3f(bx[0][i], by[0][i], 1.0);
+    glVertex3f(bx[0][32], by[0][32], 1.0);
+    glVertex3f(bx[0][29], by[0][29], 1.0);
     glEnd();
+    //bow back
     glColor3f(1.0, 0.0, 1.0);
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 21; i <= 24; i++) glVertex3f(bx[0][i], by[0][i], -1.0);
+    glVertex3f(bx[0][24], by[0][24], -1.0);
+    glVertex3f(bx[0][21], by[0][21], -1.0);
     glEnd();
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 25; i <= 28; i++) glVertex3f(bx[0][i], by[0][i], -1.0);
+    glVertex3f(bx[0][28], by[0][28], -1.0);
+    glVertex3f(bx[0][25], by[0][25], -1.0);
     glEnd();
-    glShadeModel(GL_FLAT);
-    glBegin(GL_POLYGON);
+    glBegin(GL_LINE_STRIP);
     for (i = 29; i <= 32; i++) glVertex3f(bx[0][i], by[0][i], -1.0);
+    glVertex3f(bx[0][24], by[0][24], -1.0);
+    glVertex3f(bx[0][21], by[0][21], -1.0);
     glEnd();
     //back
     glColor3f(0.0, 0.0, 0.0);
@@ -528,7 +554,7 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
     //draw the mouth
     glColor3f(0.0, 0.0, 0.0);
 	   glBegin(GL_LINE_STRIP);
-	   for (i = 6; i <= 7; i++) glVertex3f(bx[2][i], by[2][i], bz[2][i]);
+	   for (i = 6; i <= 7; i++) glVertex3f(bx[2][i], by[2][i], -1.0);
 	   glEnd();
 	   glBegin(GL_LINE_STRIP);
 	   glVertex3f(bx[0][7], by[0][7], bz[0][7]);

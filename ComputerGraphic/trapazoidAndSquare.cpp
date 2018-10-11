@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     //begin setting the window size and position
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(560, 440);
+    glutInitWindowSize(540, 440);
     glutInitWindowPosition(140, 20);
     //calling the methods for setup, renderscene, and timerfunction
     glutCreateWindow(header);
@@ -58,12 +58,12 @@ void RenderScene(void) {
     //array of plot points for square, trapezoid, and square on trapezoid
     float sqx[6], sqy[6], trx[6], tray[6], x[10], y[10];
     //arrays containing the square and trapezoid's points per draw, drawtype, and color
-    int sqPointsPerDraw[2], sqDrawType[2];
+    int sqPointsPerDraw[3], sqDrawType[3];
     float sqColorr[1], sqColorg[1], sqColorb[1];
-    int trPointsPerDraw[2], trDrawType[2];
+    int trPointsPerDraw[3], trDrawType[3];
     float trColorr[1], trColorg[1], trColorb[1];
     //arrays for square on trapezoid
-    int pointsPerDraw[3], drawType[3];
+    int pointsPerDraw[5], drawType[5];
     float colorr[2], colorg[2], colorb[2];
     cout << "in renderscene" << endl;
     //matrix mode
@@ -71,17 +71,17 @@ void RenderScene(void) {
     glLoadIdentity();
     //set viewport and glortho
     glViewport(0, 0, 540, 440);
-    glOrtho(-7.0, 7.0, -7.0, 7.0, 1.0, -1.0);
+    glOrtho(-10.0, 10.0, -10.0, 10.0, 1.0, -1.0);
     //clear color
     glClear(GL_COLOR_BUFFER_BIT);
     //call loadicons
     //settans and draw icons
     loadSquare(sqx, sqy, sqPointsPerDraw, sqDrawType, sqColorr, sqColorg, sqColorb);
-    DrawAllIcons(sqx, sqy, 2, sqPointsPerDraw, sqDrawType, sqColorr, sqColorg, sqColorb, sqtheta, sqscalex, sqscaley, sqtransx, sqtransy);
+    DrawAllIcons(sqx, sqy, 3, sqPointsPerDraw, sqDrawType, sqColorr, sqColorg, sqColorb, sqtheta, sqscalex, sqscaley, sqtransx, sqtransy);
     loadTrapezoid(trx, tray, trPointsPerDraw, trDrawType, trColorr, trColorg, trColorb);
-    DrawAllIcons(trx, tray, 2, trPointsPerDraw, trDrawType, trColorr, trColorg, trColorb, trtheta, trscalex, trscaley, trtransx, trtransy);
+    DrawAllIcons(trx, tray, 3, trPointsPerDraw, trDrawType, trColorr, trColorg, trColorb, trtheta, trscalex, trscaley, trtransx, trtransy);
     loadSquareOnTrapezoid(x, y, pointsPerDraw, drawType, colorr, colorg, colorb);
-    DrawAllIcons(x, y, 3, pointsPerDraw, drawType, colorr, colorg, colorb, theta, scalex, scaley, transx, transy);
+    DrawAllIcons(x, y, 5, pointsPerDraw, drawType, colorr, colorg, colorb, theta, scalex, scaley, transx, transy);
     glFlush();
     glEnd();
     glutSwapBuffers();
@@ -101,10 +101,12 @@ void loadSquare(float x[], float y[], int pointsPerDraw[], int drawType[], float
     //takes 5 points to draw the square and 2 points to draw line through
     pointsPerDraw[0] = 5;
     pointsPerDraw[1] = 2;
+    pointsPerDraw[2] = 4;
 
     //set draw type: 1 = GL_LINES, 2 = GL_LINE_STRIP, 3 = GL_POLYGON
     drawType[0] = 2;
     drawType[1] = 1;
+    drawType[2] = 3;
 
     //set color
     colorr[0] = 1.0;
@@ -126,10 +128,12 @@ void loadTrapezoid(float x[], float y[], int pointsPerDraw[], int drawType[], fl
     //takes 5 points to draw the trapezoid and 2 points to draw line through
     pointsPerDraw[0] = 5;
     pointsPerDraw[1] = 2;
+    pointsPerDraw[2] = 4;
 
     //set draw type: 1 = GL_LINES, 2 = GL_LINE_STRIP, 3 = GL_POLYGON
     drawType[0] = 2;
     drawType[1] = 1;
+    drawType[2] = 3;
 
     //set color
     colorr[0] = 0.0;
@@ -159,11 +163,15 @@ void loadSquareOnTrapezoid(float x[], float y[], int pointsPerDraw[], int drawTy
     pointsPerDraw[0] = 5;
     pointsPerDraw[1] = 5;
     pointsPerDraw[2] = 2;
+    pointsPerDraw[3] = 4;
+    pointsPerDraw[4] = 4;
 
     //set draw type: 1 = GL_LINES, 2 = GL_LINE_STRIP, 3 = GL_POLYGON
     drawType[0] = 2;
     drawType[1] = 2;
     drawType[2] = 1;
+    drawType[3] = 3;
+    drawType[4] = 3;
 
     //set color
     colorr[0] = 1.0;
@@ -192,7 +200,7 @@ void DrawAllIcons(float x[], float y[], int ndraws, int pointsperdraw[], int dra
     glScalef(scalex, scaley, 1.0);
 
     //if the number of draws is 2, then its drawing the square or trapezoid
-    if (ndraws == 2) {
+    if (ndraws == 3) {
 	   //make sure the points per draw is 5 for both square and trapezoid
 	   if (pointsperdraw[0] == 5) {
 		  //inser the drawType
@@ -220,9 +228,21 @@ void DrawAllIcons(float x[], float y[], int ndraws, int pointsperdraw[], int dra
 			 glEnd();
 		  }
 	   }
+	   if (pointsperdraw[2] == 4) {
+		  if (drawtype[2] == 3) {
+			 glColor3f(colorr[0], colorg[0], colorb[0]);
+			 glShadeModel(GL_FLAT);
+			 glBegin(GL_POLYGON);
+			 glVertex2f((x[0]+x[3])/2, y[0]);
+			 glVertex2f(x[0], y[0]);
+			 glVertex2f(x[1], y[1]);
+			 glVertex2f((x[1]+x[2])/2, y[1]);
+			 glEnd();
+		  }
+	   }
     }
     //else it the num of draws is 3, then it is the square on trapezoid
-    else if (ndraws == 3) {
+    else if (ndraws == 5) {
 	   //draw the trapezoid first, then square, then the line through
 	   if (pointsperdraw[0] == 5) {
 		  if (pointsperdraw[1] == 5) {
@@ -262,6 +282,30 @@ void DrawAllIcons(float x[], float y[], int ndraws, int pointsperdraw[], int dra
 			 glEnd();
 		  }
 	   }
+	   if (pointsperdraw[3] == 4) {
+		  if (drawtype[3] == 3) {
+			 glColor3f(colorr[0], colorg[0], colorb[0]);
+			 glShadeModel(GL_FLAT);
+			 glBegin(GL_POLYGON);
+			 glVertex2f((x[0] + x[3]) / 2, y[0]);
+			 glVertex2f(x[0], y[0]);
+			 glVertex2f(x[1], y[1]);
+			 glVertex2f((x[1] + x[2]) / 2, y[1]);
+			 glEnd();
+		  }
+	   }
+	   if (pointsperdraw[4] == 4) {
+		  if (drawtype[4] == 3) {
+			 glColor3f(colorr[1], colorg[1], colorb[1]);
+			 glShadeModel(GL_FLAT);
+			 glBegin(GL_POLYGON);
+			 glVertex2f((x[4] + x[7]) / 2, y[4]);
+			 glVertex2f(x[4], y[4]);
+			 glVertex2f(x[5], y[5]);
+			 glVertex2f((x[5] + x[6]) / 2, y[5]);
+			 glEnd();
+		  }
+	   }
     }
     glFlush();
     return;
@@ -296,7 +340,9 @@ void TimerFunction(int value) {
     case 3: //scale square and trapezoid
 	   if (trtransx == -5 && trtransy == -5) {
 		  trscalex = 2;
+		  trscaley = 2;
 		  sqscalex = 2;
+		  sqscaley = 2;
 		  frame = 4;
 	   }
 	   
