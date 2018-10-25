@@ -297,7 +297,7 @@ void settrans1(void) {
     glLoadIdentity();
     glTranslatef(dx, dy, dz);
     glRotatef(theta, 0.0, 0.0, 1.0);
-    //glRotatef(theta, 0.0, 1.0, 0.0);
+    glRotatef(theta, 0.0, 1.0, 0.0);
     return;
 }
 
