@@ -1,5 +1,6 @@
 //Nhung Luu
-//assignment 8
+//assignment 9
+//checkered textured polyman
 
 #include<windows.h>
 #include<GL\glut.h>
@@ -42,6 +43,17 @@ void TimerFunction(int);
 int main(int argc, char** argv) {
 	//name header of the window
 	char header[] = "Polyman by Nhung Luu";
+	//create the array for the checker board texture object
+	GLubyte image[64][64][3];
+	int i, j, n;
+	for (i = 0; i < 64; i++) {
+		for (j = 0; j < 64; j++) {
+			n = ((((i & 0x8) == 0) ^ ((j & 0x8)) == 0)) * 255;
+			image[i][j][0] = (GLubyte)n;
+			image[i][j][1] = (GLubyte)n;
+			image[i][j][2] = (GLubyte)n;
+		}
+	}
 	//begin setting the window size and position
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
@@ -49,6 +61,15 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(140, 20);
 	//calling the methods for setup, renderscene, and timerfunction
 	glutCreateWindow(header);
+	//enable 2D texture
+	glEnable(GL_TEXTURE_2D);
+	//define the texture image
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	//clamp the texture in direction s and t
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//blend in to the nearest pixel at the edges
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	SetupRC();
 	//call loadicon
 	loadIcon(bx, by, z, wbx, wby, wz, stagex, stagey, stagez, nVector);
@@ -60,7 +81,7 @@ int main(int argc, char** argv) {
 
 //setup method to choose clear color for the window: white
 void SetupRC(void) {
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	return;
 }
 
@@ -69,15 +90,15 @@ void RenderScene(void) {
 	//name the xdel and float arrays
 	float xdel = 0.25;
 	//array for light parameters
-	float ambientLight[] = { 1.0, 0.0, 0.0, 1.0 };
-	float difuseLight[] = { 1.0, 0.0, 0.0, 1.0 };
-	float specularLight[] = { 1.0, 0.0, 0.0, 1.0 };
+	float ambientLight[] = {1.0, 1.0, 1.0, 1.0};
+	float difuseLight[] = { 1.0, 1.0, 1.0, 1.0 };
+	float specularLight[] = { 1.0, 1.0, 1.0, 1.0 };
 	//set light position
 	float lightPos[] = { 0.0, 6.0, 0.5, 0.0 };
 	//set reflectant
-	float specref[] = { 1.0,1.0,1.0,1.0 };
+	float specref[] = {1.0,1.0,1.0,1.0};
 	//set spot the light will shine on
-	float spotdir[] = { 0.0, -3.0, 0.5 };
+	float spotdir[] = { 0.0, -6.0, -0.5 };
 	cout << "in renderscene" << endl;
 	//matrix mode
 	glMatrixMode(GL_PROJECTION);
@@ -98,8 +119,8 @@ void RenderScene(void) {
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, difuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 10.0);
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 10.0);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 40);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 15);
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotdir);
 	glEnable(GL_LIGHT0);
 	//define the color material of the light
@@ -173,7 +194,7 @@ void loadIcon(float bx[][33], float by[][33], float z[][33], float wbx[][33], fl
 	nVector[0][0] = normVec[0];
 	nVector[0][1] = normVec[1];
 	nVector[0][2] = normVec[2];
-	
+
 
 	//polyman left
 	bx[1][0] = -0.625; by[1][0] = 0.75; z[1][0] = 0.5;
@@ -423,7 +444,7 @@ void drawStage(float stagex[][4], float stagey[][4], float stagez[][4], float nV
 
 	for (face = 0; face <= 1; face++) {
 		//the stage will be red
-		if(face == 1) glColor3f(0.5,0,0);
+		if (face == 1) glColor3f(1, 1, 0.0);
 		else glColor3f(0.5, 0.5, 0.5);
 		glBegin(GL_POLYGON);
 		glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
@@ -438,7 +459,7 @@ void drawStage(float stagex[][4], float stagey[][4], float stagez[][4], float nV
 	//draw the light position striangle
 	if (light == 1) {
 		glBegin(GL_POLYGON);
-		glColor3f(1.0, 0.0, 1.0);
+		glColor3f(1.0, 1.0, 1.0);
 		glVertex3f(-2.0, -3.0, -3.9);
 		glVertex3f(0.0, 7.0, -3.9);
 		glVertex3f(2.0, -3.0, -3.9);
@@ -454,11 +475,11 @@ void drawStage(float stagex[][4], float stagey[][4], float stagez[][4], float nV
 		glEnd();
 
 		//create the circle under polyman
-		glColor3f(1.0, 0.0, 0.0);
+		glColor3f(0.73,0.65,0.65);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glTranslatef(0.0, -3.0, 0.5);
-		glutSolidSphere(2.0, 20, 20);
+		glutSolidSphere(1.99, 20, 20);
 
 	}
 	glFlush();
@@ -472,7 +493,7 @@ void settrans1(void) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(dx, dy, dz);
-	glRotatef(theta, 0.0, 1.0, 0.0);
+	glRotatef(theta, 1.0, 0.0, 0.0);
 	return;
 }
 
@@ -492,6 +513,9 @@ void drawIcon(float bx[][33], float by[][33], float bz[][33], float nvector[][3]
 	int j = dx;
 	int face;
 
+	//set the s and t array for the dimension
+	float s[4] = { 0.0, 0.0, 1.0, 1.0 }, t[4] = { 0.0, 1.0, 1.0, 0.0 };
+
 	//enable normalize
 	glEnable(GL_NORMALIZE);
 
@@ -500,17 +524,61 @@ void drawIcon(float bx[][33], float by[][33], float bz[][33], float nvector[][3]
 		if (face == 4 || face == 5) {
 			glBegin(GL_POLYGON);
 			glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
-			glColor3f(0.0, 1.0, 1.0);
-			for (i = 0; i <= 3; i++) glVertex3f(bx[face][i], by[face][i], bz[face][i]);
+			glColor3f(1.0, 0.0, 1.0);
+			for (i = 0; i <= 3; i++) {
+				glVertex3f(bx[face][i], by[face][i], bz[face][i]);
+			}
 			glEnd();
+			if (face == 4) {
+				//clamp the texture with the top
+				glBegin(GL_POLYGON);
+				glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
+				glTexCoord2f(s[0], t[0]);
+				glVertex3f(bx[face][0] + 0.5, by[face][0]+0.01, bz[face][0]);
+				glTexCoord2f(s[1], t[1]);
+				glVertex3f(bx[face][1] + 0.5, by[face][1]+0.01, bz[face][1]);
+				glTexCoord2f(s[2], t[2]);
+				glVertex3f(bx[face][2], by[face][2]+0.01, bz[face][2]);
+				glTexCoord2f(s[3], t[3]);
+				glVertex3f(bx[face][3], by[face][3]+0.01, bz[face][3]);
+				glEnd();
+			}
 		}
 		else {
-			if (face == 1 || face == 3) glColor3f(0.0, 1.0, 1.0);
+			if (face == 1 || face == 3) glColor3f(1.0, 0.0, 1.0);
 			else glColor3f(0.0, 0.0, 1.0);
 			glBegin(GL_POLYGON);
 			glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
 			for (i = 0; i <= 5; i++) glVertex3f(bx[face][i], by[face][i], bz[face][i]);
 			glEnd();
+			//redraw the face and back with the texture clamp on
+			if (face == 0) {
+				glBegin(GL_POLYGON);
+				glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
+				glTexCoord2f(s[0], t[0]);
+				glVertex3f(bx[face][1]+0.5, by[face][1], bz[face][1]+0.01);				
+				glTexCoord2f(s[1], t[1]);
+				glVertex3f(bx[face][2], by[face][2], bz[face][2]+0.01);
+				glTexCoord2f(s[2], t[2]);
+				glVertex3f(bx[face][4], by[face][4], bz[face][4]+0.01);
+				glTexCoord2f(s[3], t[3]);
+				glVertex3f(bx[face][5]+0.5, by[face][5], bz[face][5]+0.01);
+				glEnd();
+			}
+			//texture on the back
+			if (face == 2) {
+				glBegin(GL_POLYGON);
+				glNormal3f(nVector[face][0], nVector[face][1], nVector[face][2]);
+				glTexCoord2f(s[0], t[0]);
+				glVertex3f(bx[face][1] + 0.5, by[face][1], bz[face][1] - 0.01);
+				glTexCoord2f(s[1], t[1]);
+				glVertex3f(bx[face][2], by[face][2], bz[face][2] - 0.01);
+				glTexCoord2f(s[2], t[2]);
+				glVertex3f(bx[face][4], by[face][4], bz[face][4] - 0.01);
+				glTexCoord2f(s[3], t[3]);
+				glVertex3f(bx[face][5] + 0.5, by[face][5], bz[face][5] - 0.01);
+				glEnd();
+			}
 		}
 	}
 
@@ -589,7 +657,7 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
 			glEnd();
 		}
 		else {
-			if (face == 1 || face == 3) glColor3f(1.0, 0.0, 1.0);
+			if (face == 1 || face == 3) glColor3f(1.0, 1.0, 0.0);
 			else glColor3f(1.0, 0.0, 0.0);
 			//draw the face clockwise
 			glFrontFace(GL_CW);
@@ -636,8 +704,8 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(bx[0][6], by[0][6], bz[0][6] + 0.01);
-	glVertex3f(bx[0][7]-0.01, by[0][7]-0.01, bz[0][7] + 0.01);
-	glVertex3f(bx[2][7]-0.01, by[2][7]-0.01, bz[2][7] - 0.01);
+	glVertex3f(bx[0][7] - 0.01, by[0][7] - 0.01, bz[0][7] + 0.01);
+	glVertex3f(bx[2][7] - 0.01, by[2][7] - 0.01, bz[2][7] - 0.01);
 	glVertex3f(bx[2][6], by[2][6], bz[2][6] - 0.01);
 	glEnd();
 
@@ -722,7 +790,7 @@ void drawIcon2(float bx[][33], float by[][33], float bz[][33]) {
 }
 
 //timerfunction to switch frames
-void TimerFunction(int value){
+void TimerFunction(int value) {
 	switch (frame) {
 	case 1: //polyman and polywoman enter
 		dx -= 0.15;
@@ -734,7 +802,7 @@ void TimerFunction(int value){
 				frame = 2;
 			}
 		}
-		
+
 		break;
 
 	case 2: //polyman turn
@@ -747,8 +815,8 @@ void TimerFunction(int value){
 
 	case 3: //polyman jump
 		dy += 0.15;
-		if (dy >= 1) {
-			dy = 1;
+		if (dy >= 1.0) {
+			dy = 1.0;
 			frame = 4;
 		}
 		break;
@@ -789,6 +857,6 @@ void TimerFunction(int value){
 		break;
 	}
 
-		glutPostRedisplay();
-		glutTimerFunc(30, TimerFunction, 1);
+	glutPostRedisplay();
+	glutTimerFunc(30, TimerFunction, 1);
 }

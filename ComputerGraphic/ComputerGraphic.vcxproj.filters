@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="polymanDisco.cpp">
+    <ClCompile Include="checkeredTexturePolyman.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
