@@ -1,5 +1,6 @@
 //Nhung Luu
-//Exam 2polymam
+//Exam 2
+//lighting on pyramid
 
 #include<windows.h>
 #include<GL\glut.h>
@@ -25,7 +26,7 @@ void RenderScene(void);
 void calNormal(float[], float[], float[], float[]);
 void loadIcon(float[][4], float[][4], float[][4], float[][3]);
 void settrans1(void);
-void drawIcon(float[][4], float[][4], float[][4], float[][3]);
+void drawIcon(float[][4], float[][4], float[][4], float[][3], float[], float[]);
 void TimerFunction(int);
 
 //main
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
 
 //setup method to choose clear color for the window: white
 void SetupRC(void) {
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(0.5, 0.5, 0.5, 1.0);
 	return;
 }
 
@@ -60,11 +61,11 @@ void RenderScene(void) {
 	float xdel = 0.25;
 	//array for light parameters
 	float ambientLight[] = { 1.0, 0.0, 0.0, 1.0 };
-	float difuseLight[] = { 1.0, 0.0, 0.0, 1.0 };
+	float difuseLight[] = { 1.0, 1.0, 1.0, 1.0 };
 	float specularLight[] = { 1.0, 0.0, 0.0, 1.0 };
 
 	float ambientLight2[] = { 0.0, 1.0, 0.0, 1.0 };
-	float difuseLight2[] = { 0.0, 1.0, 0.0, 1.0 };
+	float difuseLight2[] = { 1.0, 1.0, 1.0, 1.0 };
 	float specularLight2[] = { 0.0, 1.0, 0.0, 1.0 };
 	//set light position
 	float lightPos[] = { -7,8,4,1 };
@@ -80,7 +81,7 @@ void RenderScene(void) {
 	glLoadIdentity();
 	//set viewport and glortho
 	glViewport(0, 0, 540, 440);
-	glOrtho(-7.0, 7.0, -7.0, 7.0, -10.0, 10.0);
+	glOrtho(-10, 10, -10, 10, -10.0, 10.0);
 	//enable depth test
 	glEnable(GL_DEPTH_TEST);
 	//enable lighting
@@ -126,11 +127,12 @@ void RenderScene(void) {
 		glLoadIdentity();
 		glEnable(GL_LIGHT1);
 	}
+	glFlush();
 	//clear color
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//settans and draw icons
 	settrans1();
-	drawIcon(bx, by, z, nVector);
+	drawIcon(bx, by, z, nVector, lightPos, lightPos2);
 	glFlush();
 	glEnd();
 	glutSwapBuffers();
@@ -240,7 +242,7 @@ void settrans1(void) {
 }
 
 //method to draw the icons
-void drawIcon(float bx[][4], float by[][4], float bz[][4], float nvector[][3]) {
+void drawIcon(float bx[][4], float by[][4], float bz[][4], float nvector[][3], float lightPos[], float lightPos2[]) {
 	int i;
 	int face;
 
@@ -269,6 +271,22 @@ void drawIcon(float bx[][4], float by[][4], float bz[][4], float nvector[][3]) {
 			for (i = 0; i <= 2; i++) glVertex3f(bx[face][i], by[face][i], bz[face][i]);
 			glEnd();
 		}
+	}
+
+	//draw light source
+	if (light == 0) {
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glColor3f(1.0, 0.0, 0.0);
+		glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
+		glutSolidSphere(0.5, 10, 10);
+	}
+	else {
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glColor3f(0.0, 1.0, 0.0);
+		glTranslatef(lightPos2[0], lightPos2[1], lightPos2[2]);
+		glutSolidSphere(0.5, 10, 10);
 	}
 
 	return;
